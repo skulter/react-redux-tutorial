@@ -17,12 +17,12 @@ export const insert = (text) => ({
     done: false,
   },
 });
-export const toggle = () => ({
+export const toggle = (id) => ({
   type: TOGGLE,
   id,
 });
 
-export const remove = () => ({
+export const remove = (id) => ({
   type: REMOVE,
   id,
 });
