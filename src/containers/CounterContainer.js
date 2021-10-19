@@ -2,7 +2,7 @@ import React from 'react';
 import Counter from '../components/Counter';
 import { connect } from 'react-redux';
 import { increase, decrease } from '../modules/counter';
-import { bindActionCreators } from 'redux';
+// import { bindActionCreators } from 'redux';
 
 const CounterContainer = ({ number, increase, decrease }) => {
   return (
