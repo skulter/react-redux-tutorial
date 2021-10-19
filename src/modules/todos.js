@@ -1,31 +1,50 @@
+import { createAction, createActions, handleActions } from 'redux-actions';
+
 const CHANGE_INPUT = 'todos/CHANGE_INPUT';
 const INSERT = 'todos/INSERT';
 const TOGGLE = 'todos/TOGGLE';
 const REMOVE = 'todos/REMOVE';
 
-export const changeInput = (input) => ({
-  type: CHANGE_INPUT,
-  input,
-});
+//#region ############### 액션함수생성 코드 ###############
+// export const changeInput = (input) => ({
+//   type: CHANGE_INPUT,
+//   input,
+// });
+
+// let id = 3;
+// export const insert = (text) => ({
+//   type: INSERT,
+//   todo: {
+//     id: id++,
+//     text,
+//     done: false,
+//   },
+// });
+// export const toggle = (id) => ({
+//   type: TOGGLE,
+//   id,
+// });
+
+// export const remove = (id) => ({
+//   type: REMOVE,
+//   id,
+// });
+//#endregion
+
+//#region ############# redux-actions 을 이용한 createAction함수를 이용하여 액션함수생성 ###############
+export const changeInput = createAction(CHANGE_INPUT, (input) => input);
 
 let id = 3;
-export const insert = (text) => ({
-  type: INSERT,
-  todo: {
-    id: id++,
-    text,
-    done: false,
-  },
-});
-export const toggle = (id) => ({
-  type: TOGGLE,
-  id,
-});
+export const insert = createAction(INSERT, (text) => ({
+  id: id++,
+  text,
+  done: false,
+}));
 
-export const remove = (id) => ({
-  type: REMOVE,
-  id,
-});
+export const toggle = createAction(TOGGLE, (id) => id);
+
+export const remove = createAction(REMOVE, (id) => id);
+//#endregion
 
 const initialState = {
   input: '',
@@ -39,33 +58,58 @@ const initialState = {
   ],
 };
 
-function todos(state = initialState, action) {
-  switch (action.type) {
-    case CHANGE_INPUT:
-      return {
-        ...state,
-        input: action.input,
-      };
-    case INSERT:
-      return {
-        ...state,
-        todos: state.todos.concat(action.todo),
-      };
-    case TOGGLE:
-      return {
-        ...state,
-        todos: state.todos.map((todo) =>
-          todo.id === action.id ? { ...todo, done: !todo.done } : todo,
-        ),
-      };
-    case REMOVE:
-      return {
-        ...state,
-        todos: state.todos.filter((todo) => todo.id !== action.id),
-      };
-    default:
-      return state;
-  }
-}
+//#region ############# 기본 reducer 생성 ###############
+// function todos(state = initialState, action) {
+//   switch (action.type) {
+//     case CHANGE_INPUT:
+//       return {
+//         ...state,
+//         input: action.input,
+//       };
+//     case INSERT:
+//       return {
+//         ...state,
+//         todos: state.todos.concat(action.todo),
+//       };
+//     case TOGGLE:
+//       return {
+//         ...state,
+//         todos: state.todos.map((todo) =>
+//           todo.id === action.id ? { ...todo, done: !todo.done } : todo,
+//         ),
+//       };
+//     case REMOVE:
+//       return {
+//         ...state,
+//         todos: state.todos.filter((todo) => todo.id !== action.id),
+//       };
+//     default:
+//       return state;
+//   }
+// }
+//#endregion
+
+//#region ############# redux-actions 을 이용한 handleActions함수를 이용하여 리듀서 함수 생성 ###############
+const todos = handleActions(
+  {
+    [CHANGE_INPUT]: (state, { payload: input }) => ({ ...state, input }),
+    [INSERT]: (state, { payload: todo }) => ({
+      ...state,
+      todos: state.todos.concat(todo),
+    }),
+    [TOGGLE]: (state, { payload: id }) => ({
+      ...state,
+      todos: state.todos.map((todo) =>
+        todo.id === id ? { ...todo, done: !todo.done } : todo,
+      ),
+    }),
+    [REMOVE]: (state, { payload: id }) => ({
+      ...state,
+      todos: state.todos.filter((todo) => todo.id !== id),
+    }),
+  },
+  initialState,
+);
+//#endregion
 
 export default todos;
