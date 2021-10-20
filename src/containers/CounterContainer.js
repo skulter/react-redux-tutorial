@@ -1,9 +1,9 @@
 import React from 'react';
 import Counter from '../components/Counter';
-import { connect } from 'react-redux';
+// import { connect } from 'react-redux';
 import { increase, decrease } from '../modules/counter';
 // import { bindActionCreators } from 'redux';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 
 //#region ################ 일반적인 connect 사용 ###################
 // const CounterContainer = ({ number, increase, decrease }) => {
@@ -15,7 +15,9 @@ import { useSelector } from 'react-redux';
 
 const CounterContainer = () => {
   const number = useSelector((state) => state.counter.number);
-  return <Counter number={number} />;
+  // useDispatch를 사용하여 액션 디스패치하기
+  const dispatch = useDispatch();
+  return <Counter number={number} onIncrease={()=>dispatch(increase())} onDecrease={()=> dispatch(decrease())} />;
 };
 
 //#region ############# 1. mapStateToProps, mapDispatchToProps 를 사용한 방법 #############
