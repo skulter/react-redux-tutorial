@@ -73,4 +73,7 @@ const TodosContainer = () => {
 //   },
 // )(TodosContainer);
 
-export default TodosContainer;
+// !!!!!!중요 connect를 사용할때는 기본적으로 부모 컴포넌트가 리렌더링될 때 해당 컨테이너 컴포넌트의 props가 바뀌지 않는다면 리렌더링이 방지되지만
+// useSelector을 사용하면 최적화 작업이 이루어 지지 않으므로 컨테이너에 React.memo를 사용해주어야 한다.
+// export default TodosContainer;
+export default React.memo(TodosContainer);
