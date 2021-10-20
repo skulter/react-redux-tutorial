@@ -1,5 +1,5 @@
-import { createAction, createActions, handleActions } from 'redux-actions';
-
+import { createAction, handleActions } from 'redux-actions';
+import produce from 'immer';
 const CHANGE_INPUT = 'todos/CHANGE_INPUT';
 const INSERT = 'todos/INSERT';
 const TOGGLE = 'todos/TOGGLE';
@@ -90,26 +90,79 @@ const initialState = {
 //#endregion
 
 //#region ############# redux-actions 을 이용한 handleActions함수를 이용하여 리듀서 함수 생성 ###############
+// const todos = handleActions(
+//   {
+//     [CHANGE_INPUT]: (state, { payload: input }) => ({ ...state, input }),
+//     [INSERT]: (state, { payload: todo }) => ({
+//       ...state,
+//       todos: state.todos.concat(todo),
+//     }),
+//     [TOGGLE]: (state, { payload: id }) => ({
+//       ...state,
+//       todos: state.todos.map((todo) =>
+//         todo.id === id ? { ...todo, done: !todo.done } : todo,
+//       ),
+//     }),
+//     [REMOVE]: (state, { payload: id }) => ({
+//       ...state,
+//       todos: state.todos.filter((todo) => todo.id !== id),
+//     }),
+//   },
+//   initialState,
+// );
+//#endregion
+
+//#region ############# handleActions에 immer를 사용하여 불변성 지키는 작업 ###############
 const todos = handleActions(
   {
-    [CHANGE_INPUT]: (state, { payload: input }) => ({ ...state, input }),
-    [INSERT]: (state, { payload: todo }) => ({
-      ...state,
-      todos: state.todos.concat(todo),
-    }),
-    [TOGGLE]: (state, { payload: id }) => ({
-      ...state,
-      todos: state.todos.map((todo) =>
-        todo.id === id ? { ...todo, done: !todo.done } : todo,
-      ),
-    }),
-    [REMOVE]: (state, { payload: id }) => ({
-      ...state,
-      todos: state.todos.filter((todo) => todo.id !== id),
-    }),
+    [CHANGE_INPUT]: (state, { payload: input }) =>
+      produce(state, (draft) => {
+        draft.input = input;
+      }),
+    [INSERT]: (state, { payload: todo }) =>
+      produce(state, (draft) => {
+        draft.todos = state.todos.concat(todo);
+      }),
+    [TOGGLE]: (state, { payload: id }) =>
+      produce(state, (draft) => {
+        draft.todos.map((todo) =>
+          todo.id === id ? (todo.done = !todo.done) : todo,
+        );
+      }),
+    [REMOVE]: (state, { payload: id }) =>
+      produce(state, (draft) => {
+        const index = draft.todos.findIndex((todo) => todo.id === id);
+        draft.todos.splice(index, 1);
+      }),
   },
   initialState,
 );
 //#endregion
+
+// ################ 예제 코드 #################
+// const todos = handleActions(
+//   {
+//     [CHANGE_INPUT]: (state, { payload: input }) =>
+//       produce(state, (draft) => {
+//         draft.input = input;
+//       }),
+//     [INSERT]: (state, { payload: todo }) =>
+//       produce(state, (draft) => {
+//         draft.todos.push(todo);
+//       }),
+//     [TOGGLE]: (state, { payload: id }) =>
+//       produce(state, (draft) => {
+//         const todo = draft.todos.find((todo) => todo.id === id);
+//         todo.done = !todo.done;
+//       }),
+//     [REMOVE]: (state, { payload: id }) =>
+//       produce(state, (draft) => {
+//         const index = draft.todos.findIndex((todo) => todo.id === id);
+//         draft.todos.splice(index, 1);
+//       }),
+//   },
+//   initialState,
+// );
+
 
 export default todos;
