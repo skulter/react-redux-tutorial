@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import Counter from '../components/Counter';
 // import { connect } from 'react-redux';
 import { increase, decrease } from '../modules/counter';
@@ -17,7 +17,16 @@ const CounterContainer = () => {
   const number = useSelector((state) => state.counter.number);
   // useDispatch를 사용하여 액션 디스패치하기
   const dispatch = useDispatch();
-  return <Counter number={number} onIncrease={()=>dispatch(increase())} onDecrease={()=> dispatch(decrease())} />;
+  // useDispatch를 사용할때는 useCallback과 함께 사용하는 습관 기르기 (리렌더링 될때 함수 새롭게 만드는 것 방지)
+  const onIncrease = useCallback(() => dispatch(increase()), [dispatch]);
+  const onDecrease = useCallback(() => dispatch(decrease()), [dispatch]);
+  return (
+    <Counter
+      number={number}
+      onIncrease={onIncrease}
+      onDecrease={onDecrease}
+    />
+  );
 };
 
 //#region ############# 1. mapStateToProps, mapDispatchToProps 를 사용한 방법 #############
